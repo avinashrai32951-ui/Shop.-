@@ -42,7 +42,7 @@
 
   <div id="affBox" class="aff-banner" style="display:none;">
     This order will support affiliate: <strong id="affIdText"></strong><br>
-    Share link example: <span id="affLinkText"></span>
+    Link: <span id="affLinkText"></span>
   </div>
 
   <div class="product">
@@ -52,18 +52,16 @@
   </div>
 
   <div class="product">
-    <h3>Premium Hoodies</h3>
+    <h3>Premium Hoodie</h3>
     <p>Price: ₹1499</p>
     <button onclick="buyProduct(1499)">Buy Now (Paid)</button>
   </div>
 
   <script>
-    // URL se affiliate ID read karo: ?aff=ABC123
     const params = new URLSearchParams(window.location.search);
     const affId = params.get('aff');
 
     if (affId){
-      // current affiliate save
       localStorage.setItem('current_affiliate', affId);
       document.getElementById('affIdText').textContent = affId;
       document.getElementById('affLinkText').textContent =
@@ -71,24 +69,19 @@
       document.getElementById('affBox').style.display = 'block';
     }
 
-    // Fake payment + commission track
     function buyProduct(amount){
       const aid = localStorage.getItem('current_affiliate');
       if(!aid){
         alert('Normal order placed (no affiliate)');
         return;
       }
-
-      // 7% commission
       const commission = amount * 0.07;
 
-      // localStorage me affiliate data
       let affiliates = JSON.parse(localStorage.getItem('affiliates')) || {};
       if(!affiliates[aid]){
         affiliates[aid] = {
           sales:0,
           pending:0,
-          available:0,
           total:0,
           joinDate: new Date().toISOString()
         };
