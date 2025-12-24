@@ -1,101 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>CK Traders - Shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body{
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 15px;
-    }
-    h1{font-size: 26px;margin-bottom:10px;}
-    .aff-banner{
-      background:#e3f2fd;
-      padding:10px;
-      border-radius:8px;
-      margin-bottom:15px;
-      font-size:14px;
-    }
-    .product{
-      border:1px solid #ddd;
-      border-radius:8px;
-      padding:10px;
-      margin-bottom:12px;
-    }
-    .product h3{margin:0 0 5px;}
-    .product p{margin:0 0 8px;font-size:14px;}
-    button{
-      background:#000;
-      color:#fff;
-      border:none;
-      padding:8px 14px;
-      border-radius:5px;
-      font-size:14px;
-    }
-  </style>
+  <title>Test Shop</title>
 </head>
 <body>
-  <h1>🛍️ CK Traders Shop</h1>
-
-  <div id="affBox" class="aff-banner" style="display:none;">
-    This order will support affiliate: <strong id="affIdText"></strong><br>
-    Link: <span id="affLinkText"></span>
-  </div>
-
-  <div class="product">
-    <h3>Premium Oversized T‑Shirt</h3>
-    <p>Price: ₹999</p>
-    <button onclick="buyProduct(999)">Buy Now (Paid)</button>
-  </div>
-
-  <div class="product">
-    <h3>Premium Hoodie</h3>
-    <p>Price: ₹1499</p>
-    <button onclick="buyProduct(1499)">Buy Now (Paid)</button>
-  </div>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const affId = params.get('aff');
-
-    if (affId){
-      localStorage.setItem('current_affiliate', affId);
-      document.getElementById('affIdText').textContent = affId;
-      document.getElementById('affLinkText').textContent =
-        window.location.origin + window.location.pathname + '?aff=' + affId;
-      document.getElementById('affBox').style.display = 'block';
-    }
-
-    function buyProduct(amount){
-      const aid = localStorage.getItem('current_affiliate');
-      if(!aid){
-        alert('Normal order placed (no affiliate)');
-        return;
-      }
-      const commission = amount * 0.07;
-
-      let affiliates = JSON.parse(localStorage.getItem('affiliates')) || {};
-      if(!affiliates[aid]){
-        affiliates[aid] = {
-          sales:0,
-          pending:0,
-          total:0,
-          joinDate: new Date().toISOString()
-        };
-      }
-
-      affiliates[aid].sales += 1;
-      affiliates[aid].pending += commission;
-      affiliates[aid].total += commission;
-
-      localStorage.setItem('affiliates', JSON.stringify(affiliates));
-
-      alert(`✅ Paid order success!
-Affiliate ${aid} ko ₹${commission.toFixed(2)} commission (15 days pending).`);
-    }
-  </script>
+  <h1>Test Working</h1>
+  <p>Ye naya content hai.</p>
 </body>
 </html>
