@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CK Traders - Clothing Store</title>
+  <style>body{font-family:Arial;max-width:600px;margin:50px auto;padding:20px;}</style>
+</head>
+<body>
+  <h1>🛍️ CK Traders</h1>
+  
+  <!-- Affiliate ID from URL track -->
+  <div id="affiliateInfo" style="display:none;">
+    Affiliate: <span id="affId"></span>
+  </div>
+  
+  <div class="product">
+    <h3>Premium T-Shirt - ₹999</h3>
+    <button onclick="buyProduct(999)">Buy Now (UPI)</button>
+  </div>
+  
+  <div class="product">
+    <h3>Designer Shirt - ₹1499</h3>
+    <button onclick="buyProduct(1499)">Buy Now (UPI)</button>
+  </div>
+
+  <script>
+  // URL se affiliate track
+  const urlParams = new URLSearchParams(window.location.search);
+  const affId = urlParams.get('aff');
+  if(affId) {
+    localStorage.setItem('current_affiliate', affId);
+    document.getElementById('affId').textContent = affId;
+    document.getElementById('affiliateInfo').style.display = 'block';
+  }
+  
+  function buyProduct(price) {
+    const affId = localStorage.getItem('current_affiliate');
+    if(affId) {
+      // Razorpay/UPI payment success के बाद
+      setTimeout(() => {
+        trackSale(affId, price);
+        alert(`✅ Payment Success! Affiliate ${affId} को commission milegi`);
+      }, 2000);
+    } else {
+      alert('Normal purchase');
+    }
+  }
+  
+  function trackSale(affId, amount) {
+    const affiliates = JSON.parse(localStorage.getItem('affiliates')) || {};
+    const commission = amount * 0.07; // 7%
+    
+    affiliates[affId].sales++;
+    affiliates[affId].pendingCommission += commission;
+    affiliates[affId].totalEarnings += commission;
+    
+    localStorage.setItem('affiliates', JSON.stringify(affiliates));
+    console.log(`Commission tracked: ₹${commission} for ${affId}`);
+  }
+  </script>
+</body>
+</html>
