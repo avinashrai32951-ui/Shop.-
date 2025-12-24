@@ -1,61 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>CK Traders - Clothing Store</title>
-  <style>body{font-family:Arial;max-width:600px;margin:50px auto;padding:20px;}</style>
+  <meta charset="UTF-8">
+  <title>CK Traders - Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+    h1{font-size: 26px;margin-bottom:10px;}
+    .aff-banner{
+      background:#e3f2fd;
+      padding:10px;
+      border-radius:8px;
+      margin-bottom:15px;
+      font-size:14px;
+    }
+    .product{
+      border:1px solid #ddd;
+      border-radius:8px;
+      padding:10px;
+      margin-bottom:12px;
+    }
+    .product h3{margin:0 0 5px;}
+    .product p{margin:0 0 8px;font-size:14px;}
+    button{
+      background:#000;
+      color:#fff;
+      border:none;
+      padding:8px 14px;
+      border-radius:5px;
+      font-size:14px;
+    }
+  </style>
 </head>
 <body>
-  <h1>🛍️ CK Traders</h1>
-  
-  <!-- Affiliate ID from URL track -->
-  <div id="affiliateInfo" style="display:none;">
-    Affiliate: <span id="affId"></span>
+  <h1>🛍️ CK Traders Shop</h1>
+
+  <div id="affBox" class="aff-banner" style="display:none;">
+    This order will support affiliate: <strong id="affIdText"></strong><br>
+    Share link example: <span id="affLinkText"></span>
   </div>
-  
+
   <div class="product">
-    <h3>Premium T-Shirt - ₹999</h3>
-    <button onclick="buyProduct(999)">Buy Now (UPI)</button>
+    <h3>Premium Oversized T‑Shirt</h3>
+    <p>Price: ₹999</p>
+    <button onclick="buyProduct(999)">Buy Now (Paid)</button>
   </div>
-  
+
   <div class="product">
-    <h3>Designer Shirt - ₹1499</h3>
-    <button onclick="buyProduct(1499)">Buy Now (UPI)</button>
+    <h3>Premium Hoodies</h3>
+    <p>Price: ₹1499</p>
+    <button onclick="buyProduct(1499)">Buy Now (Paid)</button>
   </div>
 
   <script>
-  // URL se affiliate track
-  const urlParams = new URLSearchParams(window.location.search);
-  const affId = urlParams.get('aff');
-  if(affId) {
-    localStorage.setItem('current_affiliate', affId);
-    document.getElementById('affId').textContent = affId;
-    document.getElementById('affiliateInfo').style.display = 'block';
-  }
-  
-  function buyProduct(price) {
-    const affId = localStorage.getItem('current_affiliate');
-    if(affId) {
-      // Razorpay/UPI payment success के बाद
-      setTimeout(() => {
-        trackSale(affId, price);
-        alert(`✅ Payment Success! Affiliate ${affId} को commission milegi`);
-      }, 2000);
-    } else {
-      alert('Normal purchase');
+    // URL se affiliate ID read karo: ?aff=ABC123
+    const params = new URLSearchParams(window.location.search);
+    const affId = params.get('aff');
+
+    if (affId){
+      // current affiliate save
+      localStorage.setItem('current_affiliate', affId);
+      document.getElementById('affIdText').textContent = affId;
+      document.getElementById('affLinkText').textContent =
+        window.location.origin + window.location.pathname + '?aff=' + affId;
+      document.getElementById('affBox').style.display = 'block';
     }
-  }
-  
-  function trackSale(affId, amount) {
-    const affiliates = JSON.parse(localStorage.getItem('affiliates')) || {};
-    const commission = amount * 0.07; // 7%
-    
-    affiliates[affId].sales++;
-    affiliates[affId].pendingCommission += commission;
-    affiliates[affId].totalEarnings += commission;
-    
-    localStorage.setItem('affiliates', JSON.stringify(affiliates));
-    console.log(`Commission tracked: ₹${commission} for ${affId}`);
-  }
+
+    // Fake payment + commission track
+    function buyProduct(amount){
+      const aid = localStorage.getItem('current_affiliate');
+      if(!aid){
+        alert('Normal order placed (no affiliate)');
+        return;
+      }
+
+      // 7% commission
+      const commission = amount * 0.07;
+
+      // localStorage me affiliate data
+      let affiliates = JSON.parse(localStorage.getItem('affiliates')) || {};
+      if(!affiliates[aid]){
+        affiliates[aid] = {
+          sales:0,
+          pending:0,
+          available:0,
+          total:0,
+          joinDate: new Date().toISOString()
+        };
+      }
+
+      affiliates[aid].sales += 1;
+      affiliates[aid].pending += commission;
+      affiliates[aid].total += commission;
+
+      localStorage.setItem('affiliates', JSON.stringify(affiliates));
+
+      alert(`✅ Paid order success!
+Affiliate ${aid} ko ₹${commission.toFixed(2)} commission (15 days pending).`);
+    }
   </script>
 </body>
 </html>
